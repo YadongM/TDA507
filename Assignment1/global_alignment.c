@@ -185,10 +185,44 @@ main()
 		printf("%c",alignX[i]);
 	}
 	printf("\n");
+
+	// number of matching characters 
+	int num_match_char = 0;
+
+	for ( i=alignmentLength-1 ; i>=0 ; i-- ) {
+		if ( alignX[i] == alignY[i] ){
+			num_match_char += 1;
+			printf("|");
+		}
+		else{
+			printf(" ");
+		}
+	}
+	printf("\n");
+
+
 	for ( i=alignmentLength-1 ; i>=0 ; i-- ) {
 		printf("%c",alignY[i]);
 	}
 	printf("\n");
+
+
+
+	// Use the length of the shortest sequence
+	int  short_seq = m > n ? m : n;
+	float percent_identity_1 = num_match_char * 100 / short_seq;
+	printf("The percent identity is %.2f%%\n", percent_identity_1);
+
+	printf("%d\n",num_match_char);
+
+	// Calculate Hamming distance
+	int hamming_distance = 0;
+	for ( i=alignmentLength-1 ; i>=0 ; i-- ) {
+		if ( alignX[i] != alignY[i] ){
+			hamming_distance += 1;
+		}
+	}
+	printf("The Hamming distance is %d", hamming_distance);
 
 	return(1);
 }

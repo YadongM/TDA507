@@ -1,0 +1,62 @@
+import sys
+import numpy as np
+
+
+def read_file(pdb_path):
+    lines_atom = []
+    with open(pdb_path, 'r', encoding="utf-8") as f:
+        for line in f:
+            line = line.split()
+            if (line[0] == 'ATOM' and line[2] == 'CA'):
+                lines_atom.append(line)
+    return lines_atom
+
+def get_positions(line_atom):
+    lines_position = [line[6:9] for line in line_atom]
+    lines_position = np.array(lines_position).astype(float)
+
+    lines_series = [line[1] for line in line_atom]
+    lines_series = np.array(lines_series).astype(int)
+
+    return lines_series, lines_position
+
+def cal_internal_contacts(lines_position, a, b, threshold=10):
+    num_internal = 0
+    for i in range(a, b-1):
+        for j in range(i+1, b):
+            _distance = np.sqrt(np.sum( (lines_position[i]-lines_position[j])**2 ))
+            if (i!=j and _distance<=threshold):
+                num_internal+=1
+    return num_internal
+
+def cal_external_contacts(lines_position, a, threshold=10):
+    num_external = 0
+    for i in range(0, a):
+        for j in range(a, len(lines_position)):
+            _distance = np.sqrt(np.sum( (lines_position[i]-lines_position[j])**2 ))
+            if (i!=j and _distance<=threshold):
+                num_external+=1
+    return num_external
+
+
+
+def cal_domak(lines_position):
+    scores_domak = []
+    max_score = 0
+    index = 0
+
+    for i in range(len(lines_position)):
+        i = i+1
+
+        int_A = cal_internal_contacts(0,i)
+        int_B = cal_internal_contacts(lines_position, i, len(lines_position))
+        ext_AB = cal_external_contacts(lines_position, i)
+        _score_domak = (int_A/ext_AB) * (int_B/ext_AB)
+        scores_domak.append(_score_domak)
+
+        if max_score < _score_domak:
+            max_score = _score_domak
+            index = i
+
+    return scores_domak, max_score, index
+
