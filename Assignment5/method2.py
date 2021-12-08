@@ -26,7 +26,7 @@ def main():
     # pdb_path1 = './1cdh.pdb'
     # pdb_path2 = './2csn.pdb'
     pdb_path1 = sys.argv[1]
-    pdb_path1 = sys.argv[2]
+    pdb_path2 = sys.argv[2]
 
     all_atom1 = read_file(pdb_path1)
     all_atom2 = read_file(pdb_path2)
